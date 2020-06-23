@@ -1,0 +1,6 @@
+# Default tasks
+- name: Install Centrify Audit Agent
+  import_tasks: install.yml
+
+- name: Enable Auditing
+  import_tasks: enable.yml

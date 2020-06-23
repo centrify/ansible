@@ -1,0 +1,19 @@
+# Uninstall Centrify Audit Agent
+- name: Check if CentrifyDC is installed
+  yum:
+    list: 'CentrifyDC'
+  register: yum_cmd
+
+- name: Check if computer is joined to domain
+  command: adinfo
+  register: adinfo_cmd
+  changed_when: adinfo_cmd.rc == 10
+  failed_when: adinfo_cmd.rc != 10
+
+- name: Remove Centrify DirectAudit package 
+  yum:
+    name: CentrifyDA
+    status: absent
+  when:
+    - yum_cmd.results | selectattr("yumstate", "match", "installed") | list | length == 1
+    - adinfo_cmd.rc == 10

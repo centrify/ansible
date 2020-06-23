@@ -1,0 +1,20 @@
+# Install Centrify Audit Agent
+- name: Check if centrify.repo exists
+  stat:
+    path: "{{centrify_repo}}"
+  register: filecheck
+
+- name: Create centrify.repo if it doesn't exist
+  copy:
+    src: centrify.repo 
+    dest: "{{centrify_repo}}"
+    owner: root
+    group: root
+    mode: '0644'
+  when: filecheck.stat.exists == false
+
+- name: Install Centrify DirectAudit package
+  yum:
+    update_cache: yes
+    name: CentrifyDA
+    state: latest

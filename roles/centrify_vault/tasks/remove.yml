@@ -1,0 +1,144 @@
+# Remove Centrify Client package
+- name: Remove Centrify Client from RedHat system
+  block:
+
+    - name: Check if CentrifyCC is installed
+      yum:
+        list: CentrifyCC
+      register: yum_cmd
+
+    - name: Check if computer is joined to Centrify Identity Platform
+      command: cinfo
+      register: cinfo_cmd
+      changed_when: cinfo_cmd.rc == 10
+      failed_when:
+        - cinfo_cmd.rc != 10
+        - cinfo_cmd.rc != 0
+
+    - name: Remove Centrify Client package 
+      block:
+
+        - name: Remove CentrifyCC package
+          yum:
+            name: CentrifyCC
+            state: absent
+
+        - name: Delete centrify.repo
+          file:
+            path: "{{redhat_repo}}"
+            state: absent
+
+      when:
+        - yum_cmd.results | selectattr("yumstate", "match", "installed") | list | length == 1
+        - cinfo_cmd.rc == 10
+
+  when: ansible_os_family == "RedHat"
+
+- name: Remove Centrify Client from Debian system
+  block:
+
+    - name: Check if CentrifyCC is installed
+      apt:
+        list: CentrifyCC
+      register: apt_cmd
+
+    - name: Check if computer is joined to Centrify Identity Platform
+      command: cinfo
+      register: cinfo_cmd
+      changed_when: cinfo_cmd.rc == 10
+      failed_when:
+        - cinfo_cmd.rc != 10
+        - cinfo_cmd.rc != 0
+
+    - name: Remove Centrify Client package
+      block:
+
+        - name: Remove CentrifyCC package
+          yum:
+            name: CentrifyCC
+            state: absent
+
+        - name: Delete Centrify entry from sources.list 
+          lineinfile:
+            path: "{{debian_repo}}"
+            line: "{{debian_repo_config}}"
+            state: absent
+
+      when:
+        - apt_cmd.results | selectattr("aptstate", "match", "installed") | list | length == 1
+        - cinfo_cmd.rc == 10
+
+  when: ansible_os_family == "Debian"
+
+- name: Remove Centrify Client from SuSE system
+  block:
+
+    - name: Check if CentrifyCC is installed
+      zypper:
+        list: CentrifyCC
+      register: zypper_cmd
+
+    - name: Check if computer is joined to Centrify Identity Platform
+      command: cinfo
+      register: cinfo_cmd
+      changed_when: cinfo_cmd.rc == 10
+      failed_when:
+        - cinfo_cmd.rc != 10
+        - cinfo_cmd.rc != 0
+
+    - name: Remove Centrify Client package
+      block:
+
+        - name: Remove CentrifyCC package
+          yum:
+            name: CentrifyCC
+            state: absent
+
+        - name: Delete centrify-rpm-suse.repo
+          file:
+            path: "{{suse_repo}}"
+            state: absent
+
+      when:
+        - zypper_cmd.results | selectattr("zypperstate", "match", "installed") | list | length == 1
+        - cinfo_cmd.rc == 10
+
+  when: ansible_os_family == "Suse"
+
+- name: Remove Centrify Client from Windows system
+  block:
+
+    - name: Check if CAgent is installed
+      win_reg_stat:
+        path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FE8C7229-27DC-4646-86C6-78EE95B9C33E}
+      register: cagent_installed
+
+    - name: Check if computer is enrolled to Centrify Identity Platform
+      win_command: cinfo.exe
+      args:
+        chdir: C:\Program Files\Centrify\cagent\
+      register: cinfo_cmd
+      changed_when: cinfo_cmd.rc == 10
+      failed_when:
+        - cinfo_cmd.rc != 10
+        - cinfo_cmd.rc != 0
+      when: cagent_installed.exists == true
+
+    - name: Remove Centrify Client package
+      block:
+
+#        - name: Get package from Centrify Identity Platform
+#          win_get_url:
+#            url: "{{cagent_url}}"
+#            dest: C:\Windows\Temp\cagentinstaller.msi
+
+        - name: Uninstall Centrify Client package 
+          win_command: msiexec.exe /x {FE8C7229-27DC-4646-86C6-78EE95B9C33E} /qn /norestart
+          args:
+            chdir: C:\Windows\System32\
+
+      when:
+        - cagent_installed.exists == true
+        - cinfo_cmd.rc == 10
+
+  when: ansible_os_family == "Windows"

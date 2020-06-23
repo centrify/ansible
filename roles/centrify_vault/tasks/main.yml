@@ -1,0 +1,16 @@
+# Default tasks 
+- name: Install Centrify Client and Enroll to Centrify Identity Platform
+  import_tasks: install.yml
+  when: run_option == "install"
+
+- name: Enroll to Centrify Identity Platform
+  import_tasks: enroll.yml
+  when: run_option == "install" or run_option == "enroll"
+
+- name: Unenroll Centrify Client
+  import_tasks: unenroll.yml
+  when: run_option == "remove" or run_option == "unenroll"
+
+- name: Uninstall Centrify Client
+  import_tasks: remove.yml
+  when: run_option == "remove"

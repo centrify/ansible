@@ -1,0 +1,58 @@
+---
+### Common variables
+# Default mode for running the playbook
+# Possible values:
+#  - install
+#  - enroll
+#  - unenroll
+#  - remove
+run_option: install
+
+# Repository configuration file to use on RedHat OS
+# Default value:
+#   redhat_repo: /etc/yum.repos.d/centrify.repo
+redhat_repo: /etc/yum.repos.d/centrify.repo
+
+# Repository configuration file and line to use on Debian OS
+# Your Repo Credentials can be found from the Centrify Download Center after creation of a Repo Key
+# Default values:
+#   debian_repo: /etc/apt/sources.list
+#   debian_repo_config: deb https://<REPOKEY>@repo.centrify.com/deb stable main
+debian_repo: /etc/apt/sources.list
+debian_repo_config: 
+
+# Repository configuration file to use on SuSE OS
+# Default value:
+#   suse_repo: /etc/zypp/repos.d/centrify-rpm-suse.repo
+suse_repo: /etc/zypp/repos.d/centrify-rpm-suse.repo
+
+### Centrify Authentication and Privilege Elevation Services variables
+# Active Directory domain name to use during join operations
+# Example:
+#   domain_name: aasgaard.lab
+domain_name: 
+
+# Active Directory Service Account to use during join operations
+# Example:
+#   service_principal: svc_centrifyadjoin@AASGAARD.LAB
+service_principal: 
+
+# Location of the Kerberos Keytab file to use during join operations
+# Default:
+#   service_keytab: /etc/adjoin.keytab
+service_keytab: /etc/adjoin.keytab
+
+# Location of the Kerberos Realm configuration file to use during join operations
+# Default:
+#   realm_config: /etc/krb5.conf
+realm_config: /etc/krb5.conf
+
+# Active Directory container to use for Computers object during join operations
+# Example:
+#   computer_container: aasgaard.lab/Centrify/Computers
+computer_container: 
+
+# Centrify Zone to use during join operations
+# Example:
+#   centrify_zone: aasgaard.lab/Centrify/Zones/Global/Linux
+centrify_zone: 

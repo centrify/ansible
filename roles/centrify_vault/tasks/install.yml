@@ -1,0 +1,92 @@
+# Install Centrify Client package
+- name: Install on Redhat family using Yum
+  block:
+
+    - name: Check if centrify.repo exists
+      stat:
+        path: "{{redhat_repo}}"
+      register: filecheck
+
+    - name: Create centrify.repo if it doesn't exist
+      copy:
+        src: redhat.repo 
+        dest: "{{redhat_repo}}"
+        owner: root
+        group: root
+        mode: '0644'
+      when: filecheck.stat.exists == false
+
+    - name: Install Centrify Client package
+      yum:
+        update_cache: yes
+        name: CentrifyCC
+        state: latest
+
+  when: ansible_os_family == "RedHat"
+
+- name: Install on Debian family using Aptitude
+  block:
+
+    - name: Ensure that centrify repo exists in sources.list
+      lineinfile:
+        path: "{{debian_repo}}"
+        line: "{{debian_repo_config}}"
+        state: present
+
+    - name: Install Centrify Client package
+      apt:
+        update_cache: yes
+        name: CentrifyCC
+        state: latest
+
+  when: ansible_os_family == "Debian"
+
+- name: Install on Suse family using Zypper
+  block:
+
+    - name: Check if centrify-rpm-suse.repo exists
+      stat:
+        path: "{{suse_repo}}"
+      register: filecheck
+
+    - name: Create centrify-rpm-suse.repo if it doesn't exist
+      copy:
+        src: suse.repo 
+        dest: "{{suse_repo}}"
+        owner: root
+        group: root
+        mode: '0644'
+      when: filecheck.stat.exists == false
+
+    - name: Install Centrify Client package
+      zypper:
+        update_cache: yes
+        name: CentrifyCC
+        state: latest
+
+  when: ansible_os_family == "Suse"
+
+- name: Install on Windows using MS Installer
+  block:
+
+    - name: Check if Centrify Client is installed
+      win_reg_stat:
+        path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FE8C7229-27DC-4646-86C6-78EE95B9C33E}
+      register: cagent_installed
+
+    - name: Install Centrify Client
+      block:
+
+        - name: Get package from Centrify Identity Platform
+          win_get_url:
+            url: "{{cagent_url}}"
+            dest: C:\Windows\Temp\cagentinstaller.msi
+
+        - name: Install Centrify Client package
+          win_command: msiexec.exe /i C:\Windows\Temp\cagentinstaller.msi /qn /norestart
+          args:
+            chdir: C:\Windows\System32\
+
+      when: cagent_installed.exists == false
+
+  when: ansible_os_family == "Windows"

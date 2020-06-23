@@ -1,0 +1,73 @@
+# Remove computer from Active Directory
+- name: Remove Linux system from Active Directory
+  block:
+  
+    - name: Check if CentrifyDC is installed
+      yum:
+        list: 'CentrifyDC'
+      register: yum_cmd
+
+    - name: Check if computer is joined to domain
+      command: adinfo
+      register: adinfo_cmd
+      changed_when: adinfo_cmd.rc == 0
+      failed_when: 
+        - adinfo_cmd.rc != 10
+        - adinfo_cmd.rc != 0
+
+    - name: Remove computer from  Active Directory
+      block:
+
+        - name: Copy service account's keytab file
+          copy:
+            src: adjoin.keytab 
+            dest: "{{user_keytab}}"
+            owner: root
+            group: root
+            mode: '0600'
+
+        - name: Leave Active Directory domain using Kerberos 
+          shell: |
+            kinit -kt "{{user_keytab}}" "{{user_principal}}"
+            adleave --remove --verbose
+            kdestroy
+            shred --iterations=1 --remove "{{user_keytab}}"
+
+      when:
+        - yum_cmd.results | selectattr("yumstate", "match", "installed") | list | length == 1
+        - adinfo_cmd.rc == 0
+
+  when: ansible_os_family == "RedHat" or ansible_os_family == "Debian" or ansible_os_family == "Suse"
+
+- name: Remove Windows system from Centrify Zone
+  block:
+
+    - name: Check if Centrify Agent is installed
+      win_reg_stat:
+        path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FE1863FD-8090-4547-94AD-472A0DC42988}
+      register: cagent_installed
+
+    - name: Check if computer is enrolled to Centrify Identity Platform
+      win_command: dzinfo.exe
+      args:
+        chdir: 'C:\Program Files\Centrify\Centrify Agent for Windows\'
+      register: dzinfo_cmd
+      changed_when: dzinfo_cmd.rc == 0
+      failed_when:
+        - dzinfo_cmd.rc != 1
+        - dzinfo_cmd.rc != 0
+
+    - name: Remove computer from Centrify Zone
+      block:
+
+        - name: Unenroll the computer from Centrify Zone without restart
+          win_shell: dzleave.exe /r no /f
+          ignore_errors: yes
+          args:
+            chdir: 'C:\Program Files\Centrify\Centrify Agent for Windows\'
+
+      when:
+        - cagent_installed.exists == true
+        - dzinfo_cmd.rc == 0
+
+  when: ansible_os_family == "Windows"

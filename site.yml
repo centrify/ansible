@@ -1,0 +1,6 @@
+---
+- hosts: all
+  roles:
+    - centrify_vault
+    - centrify_auth    
+    #- centrify_audit

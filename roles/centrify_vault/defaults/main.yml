@@ -1,0 +1,12 @@
+---
+# Common variables
+run_option: install
+redhat_repo: /etc/yum.repos.d/centrify.repo
+debian_repo: /etc/apt/sources.list
+debian_repo_config: deb https://13CE4W06G1C03R0642T4NC1D5AGW4%40centrify:243b39c3818f9c94771d039aa936f4c9edab96b6@repo.centrify.com/deb stable main
+suse_repo: /etc/zypp/repos.d/centrify-rpm-suse.repo
+
+# Centrify Privileged Access Services variables
+tenant_url: https://aasgaard.my.centrify-dev.net
+cagent_url: http://edge.clouddev.centrify.com/CloudAgent/Windows/devdog/cagentinstaller.msi
+registration_code: 3JWTTQ3TZWM3AGEODG3LDVMXUYUGKADNU2IW13VXC8W1

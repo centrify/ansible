@@ -1,0 +1,9 @@
+[centrify-rpm-suse]
+name=centrify-rpm-suse
+enabled=1
+autorefresh=1
+baseurl=https://13CE4W06G1C03R0642T4NC1D5AGW4%40centrify:243b39c3818f9c94771d039aa936f4c9edab96b6@repo.centrify.com/rpm-suse
+type=rpm-md
+repo_gpgcheck=1
+gpgcheck=1
+gpgkey=https://downloads.centrify.com/products/RPM-GPG-KEY-centrify

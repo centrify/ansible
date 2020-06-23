@@ -1,0 +1,23 @@
+# Enable Auditing 
+- name: Check if CentrifyDA is installed
+  yum:
+    list: 'CentrifyDA'
+  register: yum_cmd
+
+- name: Check if computer is joined to domain
+  command: adinfo
+  register: adinfo_cmd
+  changed_when: adinfo_cmd.rc == 0
+  failed_when: 
+    - adinfo_cmd.rc != 10
+    - adinfo_cmd.rc != 0
+
+- name: Enable session Auditing 
+  block:
+
+    - name: Leave Active Directory domain using Kerberos 
+      command: dacontrol --enable 
+
+  when:
+    - yum_cmd.results | selectattr("yumstate", "match", "installed") | list | length == 1
+    - adinfo_cmd.rc == 0
