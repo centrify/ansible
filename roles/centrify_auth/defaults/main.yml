@@ -14,7 +14,8 @@ run_option: install
 redhat_repo: /etc/yum.repos.d/centrify.repo
 
 # Repository configuration file and line to use on Debian OS
-# Your Repo Credentials can be found from the Centrify Download Center after creation of a Repo Key
+# Your Repo Credentials can be found from the Centrify Download Center after creation of a Repo Key.
+# You may also edit the information of the debian_repo_config to point to an internal mirror in case systems targeted by Ansible may not have Internet access.
 # Default values:
 #   debian_repo: /etc/apt/sources.list
 #   debian_repo_config: deb https://<REPOKEY>@repo.centrify.com/deb stable main
