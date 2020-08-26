@@ -1,0 +1,31 @@
+# Install Centrify Client package
+- name: Check if CentrifyCC is installed
+  apt:
+    list: 'CentrifyCC'
+  register: apt_cmd
+  changed_when: apt_cmd.results | selectattr("aptstate", "match", "installed") | list | length == 0
+
+- name: Install on Debian family using Aptitude
+  block:
+
+    - name: Check if centrify.repo exists
+      stat:
+        path: "{{ centrify_vault_debian_repo }}"
+      register: filecheck
+
+    - name: Create centrify.repo if it doesn't exist
+      copy:
+        src: debian.repo
+        dest: "{{ centrify_vault_debian_repo }}"
+        owner: root
+        group: root
+        mode: '0644'
+      when: filecheck.stat.exists == false
+
+    - name: Install Centrify Client package
+      apt:
+        update_cache: yes
+        name: CentrifyCC
+        state: latest
+
+  when: apt_cmd.results | selectattr("aptstate", "match", "installed") | list | length == 0

@@ -1,0 +1,32 @@
+# Remove Centrify Client package
+- name: Check if CentrifyCC is installed
+  apt:
+    list: CentrifyCC
+  register: apt_cmd
+
+- name: Remove Centrify Client package
+  block:
+
+    - name: Check if computer is joined to PAS Platform
+      command: cinfo
+      register: cinfo_cmd
+      changed_when: cinfo_cmd.rc == 0
+      failed_when:
+        - cinfo_cmd.rc != 10
+        - cinfo_cmd.rc != 0
+
+    - name: Unenroll from PAS Platform before removal
+      include_tasks: Debian-unenroll.yml
+      when: cinfo_cmd.rc == 0
+
+    - name: Remove CentrifyCC package
+      yum:
+        name: CentrifyCC
+        state: absent
+
+    - name: Delete centrify.repo
+      file:
+        path: "{{ centrify_vault_debian_repo }}"
+        state: absent
+
+  when: apt_cmd.results | selectattr("aptstate", "match", "installed") | list | length == 1

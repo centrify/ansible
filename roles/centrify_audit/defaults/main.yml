@@ -1,10 +1,6 @@
 ---
-### Common variables
-# Centrify repository to edit
+# Common variables
 centrify_repo: /etc/yum.repos.d/centrify.repo
 
-### Centrify Audit and Monitoring Services variables
-# Specify which DirectAudit installation to use for configuration of the Centrify Audit Agents
-# Example:
-#   installation_name: "Audit and Monitoring Services"
+# Centrify Audit and Monitoring Services variables
 installation_name: 

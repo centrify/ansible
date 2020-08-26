@@ -1,0 +1,10 @@
+# Post enrollment tasks
+# Centrify recommend enabling Local Account Password Management for system account (i.e. root and Administrator)
+- name: Enroll root account
+  shell: |
+    passwd --stdin root <<< "{{ centrify_vault_tmp_password }}"
+    csetaccount --managed=true --stdin root <<< "{{ centrify_vault_tmp_password }}"
+  when: centrify_vault_lapm == true
+
+#- name: Enable CentrifyCLI with DMC
+#  script:

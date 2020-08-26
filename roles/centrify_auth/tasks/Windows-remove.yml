@@ -1,0 +1,33 @@
+# Uninstall Centrify Authentication Agent
+- name: Check if Centrify Agent is installed
+  win_reg_stat:
+    path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FE1863FD-8090-4547-94AD-472A0DC42988}
+  register: cagent_installed
+
+- name: Remove Centrify Agent package
+  block:
+
+    - name: Check if computer is joined to Centrify Zone
+      win_command: dzinfo.exe
+      args:
+        chdir: 'C:\Program Files\Centrify\Centrify Agent for Windows\'
+      register: dzinfo_cmd
+      changed_when: dzinfo_cmd.rc == 1
+      failed_when:
+        - dzinfo_cmd.rc != 1
+        - dzinfo_cmd.rc != 0
+
+    - name: Unenroll from AD domain before removing Centrify Agent
+      include_tasks: Windows-unenroll.yml
+      when: dzinfo_cmd.rc == 1
+
+    - name: Uninstall Centrify Agent package
+      win_command: msiexec.exe /x {FE1863FD-8090-4547-94AD-472A0DC42988} /qn
+      args:
+        chdir: C:\Windows\System32\
+      register: msiexec_cmd
+      failed_when:
+        - msiexec_cmd.rc != 1641
+        - msiexec_cmd.rc != 0
+
+  when: cagent_installed.exists == true

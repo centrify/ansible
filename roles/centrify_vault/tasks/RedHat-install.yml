@@ -1,0 +1,31 @@
+# Install Centrify Client package
+- name: Check if CentrifyCC is installed
+  yum:
+    list: 'CentrifyCC'
+  register: yum_cmd
+  changed_when: yum_cmd.results | selectattr("yumstate", "match", "installed") | list | length == 0
+
+- name: Install on RedHat family using Yum
+  block:
+
+    - name: Check if centrify.repo exists
+      stat:
+        path: "{{centrify_vault_redhat_repo}}"
+      register: filecheck
+
+    - name: Create centrify.repo if it doesn't exist
+      copy:
+        src: redhat.repo
+        dest: "{{ centrify_vault_redhat_repo }}"
+        owner: root
+        group: root
+        mode: '0644'
+      when: filecheck.stat.exists == false
+
+    - name: Install Centrify Client package
+      yum:
+        update_cache: yes
+        name: CentrifyCC
+        state: latest
+
+  when: yum_cmd.results | selectattr("yumstate", "match", "installed") | list | length == 0

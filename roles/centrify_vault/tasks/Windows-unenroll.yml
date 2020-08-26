@@ -1,0 +1,21 @@
+# Unenroll computer from PAS Platform
+- name: Check if computer is enrolled to PAS Platform
+  win_command: cinfo.exe
+  args:
+    chdir: C:\Program Files\Centrify\cagent\
+  register: cinfo_cmd
+  changed_when: cinfo_cmd.rc == 0
+  failed_when:
+    - cinfo_cmd.rc != 10
+    - cinfo_cmd.rc != 2
+    - cinfo_cmd.rc != 0
+
+- name: Unenroll from PAS Platform
+  block:
+
+    - name: Unenroll without deleting System
+      win_command: cunenroll.exe --machine --verbose
+      args:
+        chdir: C:\Program Files\Centrify\cagent\
+
+  when: cinfo_cmd.rc == 0

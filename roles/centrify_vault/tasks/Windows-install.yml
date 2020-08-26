@@ -1,0 +1,20 @@
+# Install Centrify Client package
+- name: Check if Centrify Client is installed
+  win_reg_stat:
+    path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{43A16456-62CD-45A2-B2DF-743BA7A56894}
+  register: cagent_installed
+
+- name: Install Centrify Client
+  block:
+
+    - name: Get package from PAS Platform
+      win_get_url:
+        url: "{{ centrify_vault_cagent_url }}"
+        dest: C:\Windows\Temp\cagentinstaller.msi
+
+    - name: Install Centrify Client package
+      win_command: msiexec.exe /i C:\Windows\Temp\cagentinstaller.msi /qn /norestart
+      args:
+        chdir: C:\Windows\System32\
+
+  when: cagent_installed.exists == false
