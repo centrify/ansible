@@ -6,7 +6,7 @@
 
 ### Centrify Audit and Monitoring Services role
 This role is named *centrify_audit* and it is located under the *roles* folder.  
-To start using this role, configure the default variables under *roles/centrify_audit/defaults/main.yml*
+To start using this role, configure the default variables under *roles/centrify_audit/defaults/main.yml*.
 
 ### Centrify Authentication and Privilege Elevation Services role
 This role is named *centrify_auth* and it is located under the *roles* folder.  
