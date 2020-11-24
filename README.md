@@ -4,14 +4,14 @@
 
 ## Configuration
 
-### Centrify Audit and Monitoring Services Role
-Role is named *centrify_audit* under *roles* folder.  
-To start using this Role you should configure the default variables under *roles/centrify_audit/defaults/main.yml*
+### Centrify Audit and Monitoring Services role
+The role is named *centrify_audit* and it is located under the *roles* folder.  
+To start using this role, configure the default variables under *roles/centrify_audit/defaults/main.yml*
 
-### Centrify Authentication and Privilege Elevation Services Role
-Role is named *centrify_auth* under *roles* folder.  
-To start using this Role you should configure the default variables under *roles/centrify_auth/defaults/main.yml*  
-You will also need to generate or edit the following files under *roles/centrify_auth/files*
+### Centrify Authentication and Privilege Elevation Services role
+The role is named *centrify_auth* and it is located under the *roles* folder.  
+To start using this role, configure the default variables under *roles/centrify_auth/defaults/main.yml*  
+You must also generate or edit the following files under *roles/centrify_auth/files*
 - adjoin.keytab
 - Centrify Agent for Windows64.msi
 - Group Policy Deployment.mst
@@ -24,7 +24,7 @@ You will also need to generate or edit the following files under *roles/centrify
 You can generate a keytab file to use with Active Directory service account using the followin commands on Linux (requires a Centrify joined Linux server).
 
 **Centrify Agent for Windows64.msi and Group Policy Deployment.mst:**  
-Both those files should be copied from the software source of the Centrify Infrastructure Services for Windows in use. Those two files are located under */Agent* folder.
+Both files should be copied from the software source of the Centrify Infrastructure Services for Windows in use. Those two files are located under the */Agent* folder.
 
 **Join-CentrifyZone.ps1:**  
 This PowerShell script is provided as as sample and is used to join Windows system to existing Centrify Zone. This script can be modified to satisfy any customisation of the join process in your environment.
@@ -41,7 +41,7 @@ This file is provided as a sample and is using Centrify public repository. You m
 You may also edit the information of the repo to point to an internal mirror in case systems targeted by Ansible may not have Internet access.
 
 ### Centrify Vault Role
-Role is named *centrify_vault* under *roles* folder.  
+The role is named *centrify_vault* under *roles* folder.  
 To start using this Role you should configure the default variables under *roles/centrify_vault/defaults/main.yml*  
 You will also need to edit the following files under *roles/centrify_vault/files*
 - redhat.repo
