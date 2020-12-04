@@ -1,7 +1,7 @@
 # Enroll computer to Centrify PAS Platform
 - name: Check if CentrifyCC is installed
   apt:
-    list: 'CentrifyCC'
+    name: 'CentrifyCC'
   register: aptyum_cmd
 
 - name: Install CentrifyCC before joining to PAS Platform

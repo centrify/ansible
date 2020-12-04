@@ -1,7 +1,7 @@
 # Remove Centrify Client package
 - name: Check if CentrifyCC is installed
   zypper:
-    list: CentrifyCC
+    name: CentrifyCC
   register: zyp_cmd
 
 - name: Remove Centrify Client package

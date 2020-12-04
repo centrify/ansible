@@ -1,7 +1,7 @@
 # Enroll computer to Centrify PAS Platform
 - name: Check if CentrifyCC is installed
   zypper:
-    list: 'CentrifyCC'
+    name: 'CentrifyCC'
   register: zyp_cmd
 
 - name: Install CentrifyCC before joining to PAS Platform

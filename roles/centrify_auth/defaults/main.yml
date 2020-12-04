@@ -29,12 +29,12 @@ centrify_auth_suse_repo: /etc/zypp/repos.d/centrify-rpm-suse.repo
 # Active Directory domain name to use during join operations
 # Example:
 #   centrify_auth_domain: aasgaard.lab
-centrify_auth_domain: aasgaard.lab
+centrify_auth_domain: 
 
 # Active Directory Service Account to use during join operations
 # Example:
 #   centrify_auth_service_principal: svc_centrifyadjoin@AASGAARD.LAB
-centrify_auth_service_principal: svc_centrifyadjoin@AASGAARD.LAB
+centrify_auth_service_principal: 
 
 # Location of the Kerberos Keytab file to use during join operations
 # Default:
@@ -49,9 +49,9 @@ centrify_auth_realm_config: /etc/krb5.conf
 # Active Directory container to use for Computers object during join operations
 # Example:
 #   centrify_auth_container: aasgaard.lab/Centrify/Computers
-centrify_auth_container: aasgaard.lab/Centrify/Computers
+centrify_auth_container: 
 
 # Centrify Zone to use during join operations
 # Example:
 #   centrify_auth_zone: aasgaard.lab/Centrify/Zones/Global/Linux
-centrify_auth_zone: aasgaard.lab/Centrify/Zones/Global/Linux
+centrify_auth_zone: 

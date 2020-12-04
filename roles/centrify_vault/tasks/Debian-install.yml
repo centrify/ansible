@@ -1,7 +1,7 @@
 # Install Centrify Client package
 - name: Check if CentrifyCC is installed
   apt:
-    list: 'CentrifyCC'
+    name: 'CentrifyCC'
   register: apt_cmd
   changed_when: apt_cmd.results | selectattr("aptstate", "match", "installed") | list | length == 0
 

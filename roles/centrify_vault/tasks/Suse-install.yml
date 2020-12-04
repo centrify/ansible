@@ -1,7 +1,7 @@
 # Install Centrify Client package
 - name: Check if CentrifyCC is installed
   zypper:
-    list: 'CentrifyCC'
+    name: 'CentrifyCC'
   register: zyp_cmd
   changed_when: zyp_cmd.results | selectattr("zypstate", "match", "installed") | list | length == 0
 

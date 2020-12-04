@@ -1,7 +1,7 @@
 # Remove Centrify Client package
 - name: Check if CentrifyCC is installed
   apt:
-    list: CentrifyCC
+    name: CentrifyCC
   register: apt_cmd
 
 - name: Remove Centrify Client package
