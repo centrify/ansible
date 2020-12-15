@@ -1,0 +1,10 @@
+# Remove Centrify Client package
+- name: Remove CentrifyCC package
+  apt:
+    name: centrifycc
+    state: absent
+
+- name: Delete Centrify Repo
+  file:
+    path: /etc/apt/sources.list.d/centrify-deb.list
+    state: absent

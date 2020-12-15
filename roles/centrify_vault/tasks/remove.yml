@@ -1,0 +1,43 @@
+# Remove Centrify Client package
+- name: Linux OS family
+  block:
+  
+    - name: Check if CentrifyCC is installed
+      package_facts:
+
+    - name: Remove Centrify Client package
+      block:
+
+        - name: Unenroll before removing CentrifyCC package
+          include_tasks: unenroll.yml
+
+        - name: Remove CentrifyCC package
+          include_tasks: "remove-{{ ansible_os_family|lower }}.yml"
+
+      when: '"centrifycc" in ansible_facts.packages|lower' 
+  
+  when: ansible_os_family in ["Debian", "RedHat", "Suse"]
+  
+- name: Windows OS family
+  block:
+
+    - name: Check if CAgent is installed
+      win_reg_stat:
+        path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{43A16456-62CD-45A2-B2DF-743BA7A56894}
+      register: cagent_installed
+
+    - name: Remove Centrify Client package
+      block:
+
+        - name: Unenroll before removing CAgent package
+          include_tasks: unenroll.yml
+          when: cinfo_cmd.rc == 0
+
+        - name: Remove CAgent package 
+          include_tasks: "remove-windows.yml"
+
+      when: cagent_installed.exists == true
+  
+  when: ansible_os_family == "Windows"
+
+

@@ -1,0 +1,10 @@
+# Remove Centrify Client package
+- name: Remove CentrifyCC package
+  zypper:
+    name: CentrifyCC
+    state: absent
+
+- name: Delete Centrify Repo
+  file:
+    path: /etc/zypp/repos.d/centrify-rpm-suse.repo 
+    state: absent

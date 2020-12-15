@@ -1,0 +1,5 @@
+# Remove Centrify Agent package
+- name: Remove Centrify Agent package 
+  win_command: msiexec.exe /x {FE1863FD-8090-4547-94AD-472A0DC42988} /qn /norestart
+  args:
+    chdir: C:\Windows\System32\

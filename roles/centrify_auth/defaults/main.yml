@@ -8,22 +8,12 @@
 #  - remove
 centrify_auth_run_option: enroll
 
-# Repository configuration file to use on RedHat OS
-# Default value:
-#   centrify_auth_redhat_repo: /etc/yum.repos.d/centrify.repo
-centrify_auth_redhat_repo: /etc/yum.repos.d/centrify.repo
-
-# Repository configuration file and line to use on Debian OS
-# Your Repo Credentials can be found from the Centrify Download Center after creation of a Repo Key.
-# You may also edit the information of the debian_repo_config to point to an internal mirror in case systems targeted by Ansible may not have Internet access.
-# Default values:
-#   centrify_auth_debian_repo: /etc/apt/sources.list.d/centrify.list
-centrify_auth_debian_repo: /etc/apt/sources.list.d/centrify.list
-
-# Repository configuration file to use on SuSE OS
-# Default value:
-#   centrify_auth_suse_repo: /etc/zypp/repos.d/centrify-rpm-suse.repo
-centrify_auth_suse_repo: /etc/zypp/repos.d/centrify-rpm-suse.repo
+# URL Token for Centrify repo
+# No default value, you must use the URL Token value you generated on Centrify Download Center
+# More details here: https://www.centrify.com/support/customer-support-portal/repo
+centrify_auth_redhat_urltoken:
+centrify_auth_debian_urltoken:
+centrify_auth_suse_urltoken:
 
 ### Centrify Authentication and Privilege Elevation Services variables
 # Active Directory domain name to use during join operations

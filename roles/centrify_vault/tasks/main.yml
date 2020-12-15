@@ -1,4 +1,4 @@
 # Default tasks
 - name: Execute tasks based on run option and OS family
-  include_tasks: "{{ ansible_os_family }}-{{ centrify_vault_run_option }}.yml"
+  include_tasks: "{{ centrify_vault_run_option }}.yml"
   when: centrify_vault_run_option is defined

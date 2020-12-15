@@ -1,0 +1,17 @@
+# Install on Windows using msiexec
+- name: Copy package to temp directory
+  win_copy:
+    src: "Centrify Agent for Windows64.msi"
+    dest: C:\Windows\Temp\CentrifyAgentforWindows64.msi
+
+- name: Install Centrify Agent package
+  win_command: msiexec.exe /i C:\Windows\Temp\CentrifyAgentforWindows64.msi /qn /norestart
+  args:
+    chdir: C:\Windows\System32\
+  register: msiexec_cmd
+  failed_when:
+    - msiexec_cmd.rc != 3010
+    - msiexec_cmd.rc != 0
+
+- name: Reboot Windows system after Agent installation
+  win_reboot:

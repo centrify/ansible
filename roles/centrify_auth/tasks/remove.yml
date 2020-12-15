@@ -1,0 +1,43 @@
+# Remove Centrify Agent package
+- name: Linux OS family
+  block:
+  
+    - name: Check if CentrifyDC is installed
+      package_facts:
+
+    - name: Remove Centrify Agent package
+      block:
+
+        - name: Unenroll before removing CentrifyDC package
+          include_tasks: unenroll.yml
+
+        - name: Remove CentrifyDC package
+          include_tasks: "remove-{{ ansible_os_family|lower }}.yml"
+
+      when: '"centrifydc" in ansible_facts.packages|lower' 
+  
+  when: ansible_os_family in ["Debian", "RedHat", "Suse"]
+  
+- name: Windows OS family
+  block:
+
+    - name: Check if Centrify Agent is installed
+      win_reg_stat:
+        path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FE1863FD-8090-4547-94AD-472A0DC42988}
+      register: cagent_installed
+
+    - name: Remove Centrify Agent package
+      block:
+
+        - name: Unenroll before removing Centrify Agent package
+          include_tasks: unenroll.yml
+          when: cinfo_cmd.rc == 0
+
+        - name: Remove Centrify Agent package 
+          include_tasks: "remove-windows.yml"
+
+      when: cagent_installed.exists == true
+  
+  when: ansible_os_family == "Windows"
+
+

@@ -1,0 +1,69 @@
+# Enroll computer to Centrify Platform
+- name: Linux OS family
+  block:
+  
+    - name: Check if CentrifyCC is installed
+      package_facts:
+
+    - name: Install CentrifyCC before enrolling to Centrify Platform
+      include_tasks: "install-{{ ansible_os_family|lower }}.yml"
+      when: '"centrifycc" not in ansible_facts.packages|lower' 
+
+    - name: Check if computer is enrolled to Centrify Platform
+      command: cinfo
+      register: cinfo_cmd
+      changed_when: cinfo_cmd.rc == 10
+      failed_when:
+        - cinfo_cmd.rc != 10
+        - cinfo_cmd.rc != 0
+
+    - name: Enroll computer to Centrify Platform
+      block:
+
+        - name: Enroll computer using registration code
+          command: cenroll --tenant "{{ centrify_vault_tenant_url }}" --code "{{ centrify_vault_registration_code }}" --features "{{ centrify_vault_features }}" --dmc-scope ccli:.* --force --verbose
+
+        - name: Post Enrolment tasks 
+          include_tasks: post-enroll.yml 
+
+      when: cinfo_cmd.rc == 10
+  
+  when: ansible_os_family in ["Debian", "RedHat", "Suse"]
+  
+- name: Windows OS family
+  block:
+
+    - name: Check if CAgent is installed
+      win_reg_stat:
+        path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{43A16456-62CD-45A2-B2DF-743BA7A56894}
+      register: cagent_installed
+
+    - name: Install CAgent before enrolling to Centrify Platform
+      include_tasks: install-windows.yml
+      when: cagent_installed.exists == false
+
+    - name: Check if computer is enrolled to Centrify Platform
+      win_command: cinfo.exe
+      args:
+        chdir: C:\Program Files\Centrify\cagent\
+      register: cinfo_cmd
+      changed_when: cinfo_cmd.rc == 10
+      failed_when:
+        - cinfo_cmd.rc != 10
+        - cinfo_cmd.rc != 0
+
+    - name: Enroll computer to Centrify Platform
+      block:
+
+        - name: Enroll computer using registration code
+          win_command: cenroll.exe --tenant "{{ centrify_vault_tenant_url }}" --code "{{ centrify_vault_registration_code }}" --features "{{ centrify_vault_features }}" --dmc-scope ccli:.* --force --verbose
+          args:
+            chdir: C:\Program Files\Centrify\cagent\
+
+        - name: Post Enrolment tasks 
+          include_tasks: post-enroll.yml 
+
+      when: cinfo_cmd.rc == 10
+  
+  when: ansible_os_family == "Windows"
+  

@@ -1,0 +1,86 @@
+# Enroll computer to Centrify Zone
+- name: Linux OS family
+  block:
+  
+    - name: Check if CentrifyDC is installed
+      package_facts:
+
+    - name: Install CentrifyDC before enrolling to Centrify Zone
+      include_tasks: "install-{{ ansible_os_family|lower }}.yml"
+      when: '"centrifydc" not in ansible_facts.packages|lower' 
+
+    - name: Check if computer is enrolled to Centrify Platform
+      command: adinfo
+      register: adinfo_cmd
+      changed_when: adinfo_cmd.rc == 10
+      failed_when:
+        - adinfo_cmd.rc != 10
+        - adinfo_cmd.rc != 0
+
+    - name: Enroll computer to Centrify Zone
+      block:
+
+        - name: Copy kerberos config file to guarantee finding realm
+          copy:
+            src: krb5.conf
+            dest: "{{ centrify_auth_realm_config }}"
+            owner: root
+            group: root
+            mode: '0644'
+
+        - name: Copy service account's keytab file
+          copy:
+            src: adjoin.keytab
+            dest: "{{ centrify_auth_service_keytab }}"
+            owner: root
+            group: root
+            mode: '0600'
+
+        - name: Join the computer to Active Directory domain using kerberos
+          shell: |
+            kinit -kt "{{ centrify_auth_service_keytab }}" "{{ centrify_auth_service_principal }}"
+            adjoin "{{ centrify_auth_domain }}" --container "{{ centrify_auth_container }}" --zone "{{ centrify_auth_zone }}" --verbose
+            kdestroy
+            shred --iterations=1 --remove "{{ centrify_auth_service_keytab }}"
+
+      when: adinfo_cmd.rc == 10
+  
+  when: ansible_os_family in ["Debian", "RedHat", "Suse"]
+  
+- name: Windows OS family
+  block:
+
+    - name: Check if Centrify Agent is installed
+      win_reg_stat:
+        path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FE1863FD-8090-4547-94AD-472A0DC42988}
+      register: Centrify Agent_installed
+
+    - name: Install Centrify Agent before enrolling to Centrify Zone
+      include_tasks: install-windows.yml
+      when: Centrify Agent_installed.exists == false
+
+    - name: Check if computer is enrolled to Centrify Zone
+      win_command: dzinfo.exe
+      args:
+        chdir: C:\Program Files\Centrify\Centrify Agent for Windows\
+      register: dzinfo_cmd
+      changed_when: dzinfo_cmd.rc == 1
+      failed_when:
+        - dzinfo_cmd.rc != 1
+        - dzinfo_cmd.rc != 0
+
+    - name: Enroll computer to Centrify Zone
+      block:
+
+        - name: Copy PowerShell script for Centrify Zone enrolment
+          win_copy:
+            src: Join-CentrifyZone.ps1
+            dest: C:\Windows\Temp\Join-CentrifyZone.ps1
+
+        - name: Join the computer to Centrify Zone using prepared Windows Computer
+          win_command: powershell.exe -ExecutionPolicy ByPass -File C:\Windows\Temp\Join-CentrifyZone.ps1
+
+      when: dzinfo_cmd.rc == 10
+  
+  when: ansible_os_family == "Windows"
+  

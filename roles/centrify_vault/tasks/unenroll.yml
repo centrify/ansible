@@ -1,0 +1,40 @@
+# Unenroll computer from Centrify Platform
+- name: Linux OS family
+  block:
+  
+    - name: Check if computer is enrolled to Centrify Platform
+      command: cinfo
+      register: cinfo_cmd
+      changed_when: cinfo_cmd.rc == 0
+      failed_when:
+        - cinfo_cmd.rc != 10
+        - cinfo_cmd.rc != 2
+        - cinfo_cmd.rc != 0
+
+    - name: Unenroll from Centrify Platform without deleting System
+      command: cunenroll --machine --verbose
+      when: cinfo_cmd.rc == 0
+  
+  when: ansible_os_family in ["Debian", "RedHat", "Suse"]
+  
+- name: Windows OS family
+  block:
+
+    - name: Check if computer is enrolled to Centrify Platform
+      win_command: cinfo.exe
+      args:
+        chdir: C:\Program Files\Centrify\cagent\
+      register: cinfo_cmd
+      changed_when: cinfo_cmd.rc == 0
+      failed_when:
+        - cinfo_cmd.rc != 10
+        - cinfo_cmd.rc != 2
+        - cinfo_cmd.rc != 0
+
+    - name: Unenroll from Centrify Platform without deleting System
+      win_command: cunenroll.exe --machine --verbose
+      args:
+        chdir: C:\Program Files\Centrify\cagent\
+      when: cinfo_cmd.rc == 0
+  
+  when: ansible_os_family == "Windows"

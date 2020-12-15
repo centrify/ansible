@@ -1,0 +1,10 @@
+# Install on Windows using msiexec
+- name: Get package from PAS Platform
+  win_get_url:
+    url: "{{ centrify_vault_cagent_url }}"
+    dest: C:\Windows\Temp\cagentinstaller.msi
+
+- name: Install Centrify Client package
+  win_command: msiexec.exe /i C:\Windows\Temp\cagentinstaller.msi /qn /norestart
+  args:
+    chdir: C:\Windows\System32\

@@ -1,0 +1,10 @@
+# Remove Centrify Agent package
+- name: Remove CentrifyDC package
+  yum:
+    name: CentrifyDC
+    state: absent
+
+- name: Delete Centrify Repo
+  file:
+    path: /etc/yum.repos.d/centrify.repo 
+    state: absent

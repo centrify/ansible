@@ -1,0 +1,5 @@
+# Remove Centrify Client package
+- name: Remove CAgent package 
+  win_command: msiexec.exe /x {43A16456-62CD-45A2-B2DF-743BA7A56894} /qn /norestart
+  args:
+    chdir: C:\Windows\System32\
