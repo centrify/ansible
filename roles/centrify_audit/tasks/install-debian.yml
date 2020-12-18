@@ -1,0 +1,16 @@
+# Install on Debian family using Aptitude
+- name: Check if Centrify repo exists
+  stat:
+    path: /etc/apt/sources.list.d/centrify-deb.list
+  register: filecheck
+
+- name: Create Centrify repo if it doesn't exist
+  shell: curl -1sLf 'https://cloudrepo.centrify.com/{{ centrify_debian_urltoken }}/deb/cfg/setup/bash.deb.sh' | sudo -E bash
+  args:
+    warn: false
+  when: filecheck.stat.exists == false
+
+- name: Install Centrify Audit Agent package
+  apt:
+    name: centrifyda
+    state: latest

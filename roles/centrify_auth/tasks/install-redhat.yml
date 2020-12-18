@@ -5,7 +5,7 @@
   register: filecheck
 
 - name: Create Centrify repo if it doesn't exist
-  shell: curl -1sLf 'https://cloudrepo.centrify.com/{{ centrify_vault_redhat_urltoken }}/rpm-redhat/cfg/setup/bash.rpm.sh' | sudo -E bash
+  shell: curl -1sLf 'https://cloudrepo.centrify.com/{{ centrify_redhat_urltoken }}/rpm-redhat/cfg/setup/bash.rpm.sh' | sudo -E bash
   args:
     warn: false
   when: filecheck.stat.exists == false

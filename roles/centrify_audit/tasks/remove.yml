@@ -1,19 +1,43 @@
-# Uninstall Centrify Audit Agent
-- name: Check if CentrifyDC is installed
-  yum:
-    list: 'CentrifyDC'
-  register: yum_cmd
+# Remove Centrify Agent package
+- name: Linux OS family
+  block:
+  
+    - name: Check if CentrifyDA is installed
+      package_facts:
 
-- name: Check if computer is joined to domain
-  command: adinfo
-  register: adinfo_cmd
-  changed_when: adinfo_cmd.rc == 10
-  failed_when: adinfo_cmd.rc != 10
+    - name: Remove Centrify Agent package
+      block:
 
-- name: Remove Centrify DirectAudit package 
-  yum:
-    name: CentrifyDA
-    status: absent
-  when:
-    - yum_cmd.results | selectattr("yumstate", "match", "installed") | list | length == 1
-    - adinfo_cmd.rc == 10
+        - name: Unenroll before removing CentrifyDA package
+          include_tasks: unenroll.yml
+
+        - name: Remove CentrifyDA package
+          include_tasks: "remove-{{ ansible_os_family|lower }}.yml"
+
+      when: '"centrifyda" in ansible_facts.packages|lower' 
+  
+  when: ansible_os_family in ["Debian", "RedHat", "Suse"]
+  
+- name: Windows OS family
+  block:
+
+    - name: Check if Centrify Agent is installed
+      win_reg_stat:
+        path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FE1863FD-8090-4547-94AD-472A0DC42988}
+      register: cagent_installed
+
+    - name: Remove Centrify Agent package
+      block:
+
+        - name: Unenroll before removing Centrify Agent package
+          include_tasks: unenroll.yml
+          when: cinfo_cmd.rc == 0
+
+        - name: Remove Centrify Agent package 
+          include_tasks: "remove-windows.yml"
+
+      when: cagent_installed.exists == true
+  
+  when: ansible_os_family == "Windows"
+
+

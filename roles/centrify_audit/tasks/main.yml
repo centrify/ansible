@@ -1,6 +1,4 @@
 # Default tasks
-- name: Install Centrify Audit Agent
-  import_tasks: install.yml
-
-- name: Enable Auditing
-  import_tasks: enable.yml
+- name: Execute tasks based on run option and OS family
+  include_tasks: "{{ centrify_audit_task }}.yml"
+  when: centrify_audit_task is defined

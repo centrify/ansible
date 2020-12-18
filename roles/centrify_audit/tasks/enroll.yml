@@ -1,0 +1,34 @@
+# Enroll computer to Centrify Zone
+- name: Linux OS family
+  block:
+  
+    - name: Install CentrifyDA before enrolment to Centrify Audit & Monitoring Service
+      include_tasks: "install.yml"
+
+    - name: Check if computer is enrolled to Centrify Audit & Monitoring Service
+      command: dainfo
+      register: dainfo_cmd
+      changed_when: dainfo_cmd.rc == 10
+      failed_when:
+        - dainfo_cmd.rc != 10
+        - dainfo_cmd.rc != 0
+
+    - name: Enroll computer to Centrify Audit & Monitoring Service
+      block:
+
+        - name: Copy kerberos config file to guarantee finding realm
+          shell: |
+            dacontrol -i {{ centrify_audit_installation_name }}
+            dacontrol --enable
+
+      when: dainfo_cmd.rc == 10
+  
+  when: ansible_os_family in ["Debian", "RedHat", "Suse"]
+  
+#- name: Windows OS family
+#block:
+#
+# >>> Centrify Audit & Monitoring is managed using Group Policies on Windows systems
+#  
+#when: ansible_os_family == "Windows"
+  

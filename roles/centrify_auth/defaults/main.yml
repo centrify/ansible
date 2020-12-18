@@ -1,19 +1,20 @@
 ---
 ## Common variables
-# Default mode for running the playbook
+# Task to execute running the playbook
 # Possible values:
 #  - install
 #  - enroll
 #  - unenroll
 #  - remove
-centrify_auth_run_option: enroll
+centrify_auth_task: enroll
 
 # URL Token for Centrify repo
 # No default value, you must use the URL Token value you generated on Centrify Download Center
 # More details here: https://www.centrify.com/support/customer-support-portal/repo
-centrify_auth_redhat_urltoken:
-centrify_auth_debian_urltoken:
-centrify_auth_suse_urltoken:
+# Note that this variable is shared by all Centrify Roles where it is used as there is need for a single URL token per repository
+centrify_redhat_urltoken:
+centrify_debian_urltoken:
+centrify_suse_urltoken:
 
 ### Centrify Authentication and Privilege Elevation Services variables
 # Active Directory domain name to use during join operations

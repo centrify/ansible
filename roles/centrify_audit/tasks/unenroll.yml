@@ -1,0 +1,25 @@
+# Unenroll computer from Centrify Audit
+- name: Linux OS family
+  block:
+  
+    - name: Check if computer is enrolled to Centrify Audit & Monitoring Service
+      command: dainfo
+      register: dainfo_cmd
+      changed_when: adinfo_cmd.rc == 0
+      failed_when:
+        - dainfo_cmd.rc != 10
+        - dainfo_cmd.rc != 2
+        - dainfo_cmd.rc != 0
+
+    - name: Remove computer from Centrify Audit & Monitoring Service
+      command: dacontrol --disable
+      when: dainfo_cmd.rc == 0
+
+  when: ansible_os_family in ["Debian", "RedHat", "Suse"]
+  
+#- name: Windows OS family
+#block:
+#
+# >>> Centrify Audit & Monitoring is managed using Group Policies on Windows systems
+#  
+#when: ansible_os_family == "Windows"

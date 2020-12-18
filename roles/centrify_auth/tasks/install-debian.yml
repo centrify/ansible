@@ -5,7 +5,7 @@
   register: filecheck
 
 - name: Create Centrify repo if it doesn't exist
-  shell: curl -1sLf 'https://cloudrepo.centrify.com/{{ centrify_vault_debian_urltoken }}/deb/cfg/setup/bash.deb.sh' | sudo -E bash
+  shell: curl -1sLf 'https://cloudrepo.centrify.com/{{ centrify_debian_urltoken }}/deb/cfg/setup/bash.deb.sh' | sudo -E bash
   args:
     warn: false
   when: filecheck.stat.exists == false

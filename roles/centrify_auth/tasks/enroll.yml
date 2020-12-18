@@ -2,12 +2,8 @@
 - name: Linux OS family
   block:
   
-    - name: Check if CentrifyDC is installed
-      package_facts:
-
     - name: Install CentrifyDC before enrolling to Centrify Zone
-      include_tasks: "install-{{ ansible_os_family|lower }}.yml"
-      when: '"centrifydc" not in ansible_facts.packages|lower' 
+      include_tasks: "install.yml"
 
     - name: Check if computer is enrolled to Centrify Platform
       command: adinfo
@@ -50,14 +46,8 @@
 - name: Windows OS family
   block:
 
-    - name: Check if Centrify Agent is installed
-      win_reg_stat:
-        path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FE1863FD-8090-4547-94AD-472A0DC42988}
-      register: Centrify Agent_installed
-
     - name: Install Centrify Agent before enrolling to Centrify Zone
       include_tasks: install-windows.yml
-      when: Centrify Agent_installed.exists == false
 
     - name: Check if computer is enrolled to Centrify Zone
       win_command: dzinfo.exe

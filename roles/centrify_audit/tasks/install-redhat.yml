@@ -1,0 +1,16 @@
+# Install on RedHat family using Yum
+- name: Check if Centrify repo exists
+  stat:
+    path: /etc/yum.repos.d/centrify.repo
+  register: filecheck
+
+- name: Create Centrify repo if it doesn't exist
+  shell: curl -1sLf 'https://cloudrepo.centrify.com/{{ centrify_redhat_urltoken }}/rpm-redhat/cfg/setup/bash.rpm.sh' | sudo -E bash
+  args:
+    warn: false
+  when: filecheck.stat.exists == false
+
+- name: Install Centrify Audit Agent package
+  yum:
+    name: CentrifyDA
+    state: latest

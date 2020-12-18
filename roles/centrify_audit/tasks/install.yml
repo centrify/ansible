@@ -1,20 +1,26 @@
-# Install Centrify Audit Agent
-- name: Check if centrify.repo exists
-  stat:
-    path: "{{centrify_repo}}"
-  register: filecheck
+# Install Centrify Audit package
+- name: Linux OS family
+  block:
+  
+    - name: Check if CentrifyDA is installed
+      package_facts:
 
-- name: Create centrify.repo if it doesn't exist
-  copy:
-    src: centrify.repo 
-    dest: "{{centrify_repo}}"
-    owner: root
-    group: root
-    mode: '0644'
-  when: filecheck.stat.exists == false
-
-- name: Install Centrify DirectAudit package
-  yum:
-    update_cache: yes
-    name: CentrifyDA
-    state: latest
+    - name: Install CentrifyDA package 
+      include_tasks: "install-{{ ansible_os_family|lower }}.yml"
+      when: '"centrifyda" not in ansible_facts.packages|lower'
+  
+  when: ansible_os_family in ["Debian", "RedHat", "Suse"]
+  
+- name: Windows OS family
+  block:
+  
+    - name: Check if Centrify Agent is installed
+      win_reg_stat:
+        path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FE1863FD-8090-4547-94AD-472A0DC42988}
+      register: cagent_installed
+      
+    - name: Install Centrify Agent package
+      include_tasks: "install-windows.yml"
+      when: cagent_installed.exists == false
+      
+  when: ansible_os_family == "Windows"

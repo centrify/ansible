@@ -1,6 +1,24 @@
 ---
-# Common variables
-centrify_repo: /etc/yum.repos.d/centrify.repo
+## Common variables
+# Task to execute running the playbook
+# Possible values:
+#  - install
+#  - enroll
+#  - unenroll
+#  - remove
+centrify_audit_task: enroll
 
-# Centrify Audit and Monitoring Services variables
-installation_name: 
+# URL Token for Centrify repo
+# No default value, you must use the URL Token value you generated on Centrify Download Center
+# More details here: https://www.centrify.com/support/customer-support-portal/repo
+# Note that this variable is shared by all Centrify Roles where it is used as there is need for a single URL token per repository
+centrify_redhat_urltoken:
+centrify_debian_urltoken:
+centrify_suse_urltoken:
+
+
+### Centrify Audit and Monitoring Services variables
+# Active Directory domain name to use during join operations
+# Example:
+#   centrify_auth_domain: aasgaard.lab
+centrify_audit_installation_name: 

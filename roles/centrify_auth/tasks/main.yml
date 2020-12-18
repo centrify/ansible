@@ -1,4 +1,4 @@
 # Default tasks
 - name: Execute tasks based on run option and OS family
-  include_tasks: "{{ centrify_auth_run_option }}.yml"
-  when: centrify_auth_run_option is defined
+  include_tasks: "{{ centrify_auth_task }}.yml"
+  when: centrify_auth_task is defined

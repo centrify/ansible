@@ -1,0 +1,10 @@
+# Remove Centrify Audit Agent package
+- name: Remove CentrifyDA package
+  yum:
+    name: CentrifyDA
+    state: absent
+
+- name: Delete Centrify Repo
+  file:
+    path: /etc/yum.repos.d/centrify.repo 
+    state: absent
