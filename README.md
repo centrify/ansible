@@ -1,7 +1,17 @@
 # Centrify for Ansible
+This is the README file for using Ansible roles in your playbooks to deploy Centrify software and enroll systems to Centrify Platform and/or Active Directory.
+There is three Ansible roles provided, allowing deployment of Centrify Server Suite agents and Centrify Cloud Suite clients.
+- centrify_audit
+- centrify_auth
+- centrify_vault
 
 ## Installation
-To make these roles available in your playbooks, simply copy the content of *roles* folder under *.ansible/roles* located in the home directory of the user running playbooks or under */etc/ansible/roles*. 
+To make these roles available in your playbooks, you must install them on your Ansible server by running the following command:
+```
+ansible-galaxy install git@github.com:centrify/ansible#roles
+``` 
+
+Alternatively, you can copy the content of *roles* folder of this repository under *.ansible/roles* located in the home directory of the user running playbooks or under */etc/ansible/roles*.
 
 ## Configuration
 
